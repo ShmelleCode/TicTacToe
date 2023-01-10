@@ -15,7 +15,53 @@
     <main>
         <div class="overlay start active">
             <h2>Tic Tac Toe</h2>
-            <button id="start">Begin!</button>
+            <form action="" id="players">
+                <fieldset id="player-one">
+                    <legend>Player 1</legend>
+                    <div class="radio">
+                        <label for="player-one-human">Human</label>
+                        <input type="radio" name="player-one" id="player-one-human" checked>
+                    </div>
+                    <div class="radio">
+                        <label for="player-one-ai">AI</label>
+                        <input type="radio" name="player-one" id="player-one-ai">
+                    </div>
+                    <div class="player-name">
+                        <label for="player-one-name" class="text-label">Name:</label>
+                        <input type="text" name="player-one-name" id="player-one-name">
+                    </div>
+                    <div class="ai-level">
+                        <label for="ai-level">AI-level</label>
+                        <select name="ai-level" id="ai-level">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                        </select>
+                    </div>
+                </fieldset>
+                <fieldset id="player-two">
+                    <legend>Player 2</legend>
+                    <div class="radio">
+                        <label for="player-two-human">Human</label>
+                        <input type="radio" name="player-two" id="player-two-human" checked>
+                    </div>
+                    <div class="radio">
+                        <label for="player-two-ai">AI</label>
+                        <input type="radio" name="player-two" id="player-two-ai">
+                    </div>
+                    <div class="player-name">
+                        <label for="player-two-name" class="text-label">Name:</label>
+                        <input type="text" name="player-one-name" id="player-one-name">
+                    </div>
+                    <div class="ai-level">
+                        <label for="ai-level">AI-level</label>
+                        <select name="ai-level" id="ai-level">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                        </select>
+                    </div>
+                </fieldset>
+            </form>
+            <button form="players" id="start">Begin!</button>
         </div>
         <div class="container"></div>
         <div class="overlay end">

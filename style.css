@@ -32,6 +32,7 @@ main {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    user-select: none;
 }
 
 .container {
@@ -74,4 +75,22 @@ main {
 }
 .overlay.active {
     left: 0;
+}
+
+form {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    flex-direction: row;
+    justify-content: space-evenly;
+    font-size: 1.5rem;
+}
+fieldset {
+    padding: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+label.text-label {
+    display: block;
 }
