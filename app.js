@@ -2,7 +2,7 @@ const container = document.querySelector(".container");
 const overlayStart = document.querySelector(".start");
 const overlayEnd = document.querySelector(".end");
 const resetButton = document.querySelector("#reset");
-const startButton = document.querySelector("#start");
+const startForm = document.querySelector("#players");
 const radioOptions = document.querySelectorAll("input[type='radio']");
 
 const gameBoard = (() => {
@@ -103,11 +103,12 @@ const gameFlow = (() => {
         return false;
     }
 
-    function gameStart() {
+    function gameStart(event) {
         gameBoard.resetState();
         activePlayer = player1;
         overlayStart.classList.remove("active");
         gameBoard.renderBoard();
+        event.preventDefault();
     }
 
     function gameEnd(outcome, player = {}) {
@@ -127,7 +128,7 @@ const gameFlow = (() => {
 })();
 
 container.addEventListener("click", gameFlow.placeMarker);
-startButton.addEventListener("click", gameFlow.gameStart);
+startForm.addEventListener("submit", gameFlow.gameStart);
 resetButton.addEventListener("click", gameBoard.restart);
 radioOptions.forEach((radio) => {
     radio.addEventListener('change', gameBoard.switchOptions);
