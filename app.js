@@ -52,12 +52,23 @@ const Player = (name, marker) => {
     return {getName, getMarker};
 }
 
-const player1 = Player("player1", "x");
-const player2 = Player("player2", "o");
-
 const gameFlow = (() => {
-    let activePlayer = player1;
+    let player1;
+    let player2;
+    let activePlayer;
     let activePlayerNumber = 1;
+    
+    function gameStart(event) {
+        gameBoard.resetState();
+        const playerNames = setPlayers();
+        player1 = Player(playerNames[0], "x");
+        player2 = Player(playerNames[1], "o");
+        activePlayer = player1;
+        activePlayerNumber = 1;
+        overlayStart.classList.remove("active");
+        gameBoard.renderBoard();
+        event.preventDefault();
+    }
 
     function placeMarker(event) {
         if (event.target.textContent) return;
@@ -102,13 +113,18 @@ const gameFlow = (() => {
         }
         return false;
     }
-
-    function gameStart(event) {
-        gameBoard.resetState();
-        activePlayer = player1;
-        overlayStart.classList.remove("active");
-        gameBoard.renderBoard();
-        event.preventDefault();
+    
+    function setPlayers() {
+        const playerFields = document.querySelectorAll("fieldset div.active");
+        const playerNames = [];
+        playerFields.forEach((playerField) => {
+            if (playerField.classList.contains("player-name")) {
+                playerNames.push(playerField.querySelector("input[type='text']").value);
+            } else {
+                playerNames.push("AI");
+            }
+        });
+        return playerNames;
     }
 
     function gameEnd(outcome, player = {}) {
