@@ -78,11 +78,10 @@ main {
 }
 
 form {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
     padding: 2rem;
-    flex-direction: row;
-    justify-content: space-evenly;
     font-size: 1.5rem;
 }
 fieldset {
@@ -92,5 +91,11 @@ fieldset {
     gap: 1rem;
 }
 label.text-label {
+    display: block;
+}
+.player-name, .ai-level {
+    display: none;
+}
+.player-name.active, .ai-level.active {
     display: block;
 }
