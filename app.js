@@ -4,6 +4,7 @@ const overlayEnd = document.querySelector(".end");
 const resetButton = document.querySelector("#reset");
 const startForm = document.querySelector("#players");
 const radioOptions = document.querySelectorAll("input[type='radio']");
+const markers = ["x", "o"];
 
 const gameBoard = (() => {
     let _boardState = new Array(9).fill("");
@@ -46,27 +47,28 @@ const gameBoard = (() => {
     return {renderBoard, setState, getState, resetState, restart, switchOptions};
 })();
 
-const Player = (name, marker) => {
+const Player = (name, marker, isAi) => {
     const getName = () => name;
     const getMarker = () => marker;
-    return {getName, getMarker};
+    const checkIsAi = () => isAi;
+    return {getName, getMarker, checkIsAi};
 }
 
 const gameFlow = (() => {
-    let player1;
-    let player2;
+    let players = [];
     let activePlayer;
-    let activePlayerNumber = 1;
+    let activePlayerNumber;
     
     function gameStart(event) {
         gameBoard.resetState();
-        const playerNames = setPlayers();
-        player1 = Player(playerNames[0], "x");
-        player2 = Player(playerNames[1], "o");
-        activePlayer = player1;
+        players = [];
+        setPlayers();
+        activePlayer = players[0];
         activePlayerNumber = 1;
         overlayStart.classList.remove("active");
         gameBoard.renderBoard();
+        (players[0].checkIsAi()) ? setTimeout(aiTurnEasy, 1000)
+                                    : container.addEventListener("click", gameFlow.placeMarker);
         event.preventDefault();
     }
 
@@ -77,24 +79,9 @@ const gameFlow = (() => {
         const index = event.target.dataset.index;
         gameBoard.setState(index, marker);
         
-        const currState = gameBoard.getState();
-        
-        if (checkWin(currState, marker)) {
-            gameEnd("win", activePlayer);
-            return;
-        }
-        if (currState.every((tile) => tile)) {
-            gameEnd("tie");
-            return;
-        }
-
-        if (activePlayerNumber == 1) {
-            activePlayer = player2;
-            activePlayerNumber = 2;
-        } else {
-            activePlayer = player1;
-            activePlayerNumber = 1;
-        }
+        if (checkGameEnd()) return;
+        container.removeEventListener("click", gameFlow.placeMarker);
+        switchActivePlayer();
     }
 
     function checkWin(state, marker) {
@@ -116,18 +103,58 @@ const gameFlow = (() => {
     
     function setPlayers() {
         const playerFields = document.querySelectorAll("fieldset div.active");
-        const playerNames = [];
-        playerFields.forEach((playerField) => {
+        let aiCount = 1;
+        playerFields.forEach((playerField, index) => {
             if (playerField.classList.contains("player-name")) {
-                playerNames.push(playerField.querySelector("input[type='text']").value);
+                let playerName = playerField.querySelector("input[type='text']").value;
+                players.push(Player(playerName, markers[index], false));
             } else {
-                playerNames.push("AI");
+                players.push(Player(`AI${aiCount}`, markers[index], true));
+                aiCount++;
             }
         });
-        return playerNames;
+    }
+
+    function checkGameEnd() {
+        const currState = gameBoard.getState();
+        const marker = activePlayer.getMarker();
+        if (checkWin(currState, marker)) {
+            gameEnd("win", activePlayer);
+            return true;
+        }
+        if (currState.every((tile) => tile)) {
+            gameEnd("tie");
+            return true;
+        }
+        return false;
+    }
+
+    function switchActivePlayer() {
+        if (activePlayerNumber == 1) {
+            activePlayer = players[1];
+            activePlayerNumber = 2;
+        } else {
+            activePlayer = players[0];
+            activePlayerNumber = 1;
+        }
+        (activePlayer.checkIsAi()) ? setTimeout(aiTurnEasy, 500)
+                                         : container.addEventListener("click", gameFlow.placeMarker);
+        
+    }
+
+    function aiTurnEasy() {
+        const gameState = gameBoard.getState();
+        let index = Math.floor(Math.random()*9);
+        while (gameState[index]) {
+            index = Math.floor(Math.random()*9);
+        }
+        gameBoard.setState(index, activePlayer.getMarker());
+        if (checkGameEnd()) return;
+        switchActivePlayer();
     }
 
     function gameEnd(outcome, player = {}) {
+        container.removeEventListener("click", gameFlow.placeMarker);
         const endMessage = document.querySelector(".end-message");
         switch (outcome) {
             case "win": 
@@ -143,7 +170,6 @@ const gameFlow = (() => {
     return {placeMarker, gameStart};
 })();
 
-container.addEventListener("click", gameFlow.placeMarker);
 startForm.addEventListener("submit", gameFlow.gameStart);
 resetButton.addEventListener("click", gameBoard.restart);
 radioOptions.forEach((radio) => {
