@@ -100,7 +100,12 @@ const gameFlow = (() => {
         }
         return false;
     }
-    
+
+    function checkTie(state) {
+        if (state.every((cell) => cell)) return true;
+        return false;
+    }
+
     function setPlayers() {
         const playerFields = document.querySelectorAll("fieldset div.active");
         let aiCount = 1;
@@ -122,11 +127,25 @@ const gameFlow = (() => {
             gameEnd("win", activePlayer);
             return true;
         }
-        if (currState.every((tile) => tile)) {
+        if (checkTie(currState)) {
             gameEnd("tie");
             return true;
         }
         return false;
+    }
+    
+    function gameEnd(outcome, player = {}) {
+        container.removeEventListener("click", gameFlow.placeMarker);
+        const endMessage = document.querySelector("#end-message");
+        switch (outcome) {
+            case "win": 
+                endMessage.textContent = `${player.getName()} wins!`;
+                break;
+            case "tie": 
+                endMessage.textContent = `It's a tie!`;
+                break;
+        }
+        overlayEnd.classList.add("active");
     }
 
     function switchActivePlayer() {
@@ -137,7 +156,7 @@ const gameFlow = (() => {
             activePlayer = players[0];
             activePlayerNumber = 1;
         }
-        (activePlayer.checkIsAi()) ? setTimeout(aiTurnEasy, 500)
+        (activePlayer.checkIsAi()) ? setTimeout(aiTurnHard, 500)
                                          : container.addEventListener("click", gameFlow.placeMarker);
         
     }
@@ -153,18 +172,74 @@ const gameFlow = (() => {
         switchActivePlayer();
     }
 
-    function gameEnd(outcome, player = {}) {
-        container.removeEventListener("click", gameFlow.placeMarker);
-        const endMessage = document.querySelector(".end-message");
-        switch (outcome) {
-            case "win": 
-                endMessage.textContent = `${player.getName()} wins!`;
-                break;
-            case "tie": 
-                endMessage.textContent = `It's a tie!`;
-                break;
+    function aiTurnHard() {
+        const gameState = gameBoard.getState();
+        const playerMarker = activePlayer.getMarker();
+        const opponentMarker = (playerMarker == 'x' ? 'o' : 'x');
+        let index = findBestMove(gameState, playerMarker, opponentMarker);
+        gameBoard.setState(index, playerMarker);
+        if (checkGameEnd()) return;
+        switchActivePlayer();
+    }
+
+    function evaluateBoard(state, playerMarker, opponentMarker) {
+        const winCombs = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5 ,8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+        for (let comb of winCombs) {
+            if (comb.every((cell) => state[cell] === playerMarker)) return 10;
+            if (comb.every((cell) => state[cell] === opponentMarker)) return -10;
         }
-        overlayEnd.classList.add("active");
+        return 0;
+    }
+
+    function minimax(state, depth, isPlayerTurn, playerMarker, opponentMarker, memo={}) {
+        const stateName = state.join(',');
+        if (stateName in memo) return memo[stateName];
+    
+        let score = evaluateBoard(state, playerMarker, opponentMarker);
+    
+        if (score === 10) return score;
+    
+        if (score === -10) return score;
+    
+        if (checkTie(state)) return 0;
+    
+        let bestScore = isPlayerTurn ? -1000 : 1000;
+    
+        state.forEach((cell, index) => {
+            if (cell) return;
+            state[index] = isPlayerTurn ? playerMarker : opponentMarker;
+            bestScore = isPlayerTurn
+                        ? Math.max(bestScore, minimax(state, depth + 1, !isPlayerTurn, playerMarker, opponentMarker, memo))
+                        : Math.min(bestScore, minimax(state, depth + 1, !isPlayerTurn, playerMarker, opponentMarker, memo));
+            state[index] = "";
+        });
+        memo[stateName] = (isPlayerTurn ? bestScore - depth : bestScore + depth);
+        return memo[stateName];
+    }
+
+    function findBestMove(state, playerMarker, opponentMarker) {
+        let bestMove = -1;
+        let bestScore = -1000;
+        state.forEach((cell, index) => {
+            if (cell) return;
+            state[index] = playerMarker;
+            let moveScore = minimax(state, 0, false, playerMarker, opponentMarker);
+            state[index] = '';
+            if (moveScore > bestScore) {
+                bestScore = moveScore;
+                bestMove = index;
+            }
+        })
+        return bestMove;
     }
 
     return {placeMarker, gameStart};
