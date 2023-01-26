@@ -71,42 +71,8 @@ const gameFlow = (() => {
         overlayStart.classList.remove("active");
         gameBoard.renderBoard();
         (players[0].checkIsAi()) ? setTimeout(aiTurn, 1000, 'easy')
-                                 : container.addEventListener("click", gameFlow.placeMarker);
+                                 : container.addEventListener("click", placeMarker);
         event.preventDefault();
-    }
-
-    function placeMarker(event) {
-        if (event.target.textContent) return;
-        
-        const marker = activePlayer.getMarker();
-        const index = event.target.dataset.index;
-        gameBoard.setState(index, marker);
-        
-        if (checkGameEnd()) return;
-        container.removeEventListener("click", gameFlow.placeMarker);
-        switchActivePlayer();
-    }
-
-    function checkWin(state, marker) {
-        const winCombs = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5 ,8],
-            [0, 4, 8],
-            [2, 4, 6]
-        ];
-        for (let comb of winCombs) {
-            if (comb.every((cell) => state[cell] === marker)) return true;
-        }
-        return false;
-    }
-
-    function checkTie(state) {
-        if (state.every((cell) => cell)) return true;
-        return false;
     }
 
     function setPlayers() {
@@ -124,10 +90,27 @@ const gameFlow = (() => {
         });
     }
 
+    function placeMarker(event) {
+        if (event.target.textContent) return;
+        
+        const marker = activePlayer.getMarker();
+        const index = event.target.dataset.index;
+        gameBoard.setState(index, marker);
+        
+        if (checkGameEnd()) return;
+        container.removeEventListener("click", gameFlow.placeMarker);
+        switchActivePlayer();
+    }
+
+    function checkTie(state) {
+        if (state.every((cell) => cell)) return true;
+        return false;
+    }
+
     function checkGameEnd() {
         const currState = gameBoard.getState();
-        const marker = activePlayer.getMarker();
-        if (checkWin(currState, marker)) {
+        const activeMarker = activePlayer.getMarker();
+        if (evaluateBoard(currState, activeMarker) > 0) {
             gameEnd("win", activePlayer);
             return true;
         }
@@ -163,7 +146,7 @@ const gameFlow = (() => {
         turnCount++;
         (activePlayer.checkIsAi()) 
             ? setTimeout(aiTurn, 500, (activePlayer.getAiLevel() == 'medium' && turnCount <= 1) ? 'easy' : activePlayer.getAiLevel())
-            : container.addEventListener("click", gameFlow.placeMarker);
+            : container.addEventListener("click", placeMarker);
         
     }
 
@@ -219,15 +202,11 @@ const gameFlow = (() => {
         return 0;
     }
 
-    function minimax(state, depth, isPlayerTurn, aiLevel, playerMarker, opponentMarker, memo={}) {
+    function minimax(state, depth, isPlayerTurn, playerMarker, opponentMarker, memo={}) {
         const stateName = state.join(',');
         if (stateName in memo) return memo[stateName];
     
         let score = evaluateBoard(state, playerMarker, opponentMarker);
-        
-        if (aiLevel == 'medium' && depth == 1) {
-            return score;
-        }
 
         if (score === 10) return score;
     
@@ -241,8 +220,8 @@ const gameFlow = (() => {
             if (cell) return;
             state[index] = isPlayerTurn ? playerMarker : opponentMarker;
             bestScore = isPlayerTurn
-                        ? Math.max(bestScore, minimax(state, depth + 1, !isPlayerTurn, aiLevel, playerMarker, opponentMarker, memo))
-                        : Math.min(bestScore, minimax(state, depth + 1, !isPlayerTurn, aiLevel, playerMarker, opponentMarker, memo));
+                        ? Math.max(bestScore, minimax(state, depth + 1, !isPlayerTurn, playerMarker, opponentMarker, memo))
+                        : Math.min(bestScore, minimax(state, depth + 1, !isPlayerTurn, playerMarker, opponentMarker, memo));
             state[index] = "";
         });
         memo[stateName] = (isPlayerTurn ? bestScore - depth : bestScore + depth);
@@ -252,11 +231,10 @@ const gameFlow = (() => {
     function findBestMove(state, playerMarker, opponentMarker) {
         let bestMove = -1;
         let bestScore = -1000;
-        let aiLevel = activePlayer.getAiLevel();
         state.forEach((cell, index) => {
             if (cell) return;
             state[index] = playerMarker;
-            let moveScore = minimax(state, 0, false, aiLevel, playerMarker, opponentMarker);
+            let moveScore = minimax(state, 0, false, playerMarker, opponentMarker);
             state[index] = '';
             if (moveScore > bestScore) {
                 bestScore = moveScore;
@@ -266,7 +244,7 @@ const gameFlow = (() => {
         return bestMove;
     }
 
-    return {placeMarker, gameStart};
+    return {gameStart};
 })();
 
 startForm.addEventListener("submit", gameFlow.gameStart);
