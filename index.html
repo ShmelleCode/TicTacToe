@@ -5,70 +5,81 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" />
     <script src="app.js" defer></script>
     <title>TicTacToe</title>
 </head>
 <body>
     <header>
-        <h1 class="title">TicTacToe</h1>
+        <h1 class="title">Tic Tac Toe</h1>
     </header>
     <main>
-        <div class="overlay start active">
-            <h2>Tic Tac Toe</h2>
-            <form action="" id="players">
-                <fieldset id="player-one">
-                    <legend>Player 1</legend>
-                    <div class="radio">
-                        <label for="player-one-human">Human</label>
-                        <input type="radio" name="player-one" id="player-one-human" autocomplete="off" checked>
-                    </div>
-                    <div class="radio">
-                        <label for="player-one-ai">AI</label>
-                        <input type="radio" name="player-one" id="player-one-ai" autocomplete="off">
-                    </div>
-                    <div id="player-one-human-options" class="player-name active">
-                        <label for="player-one-name" class="text-label">Name:</label>
-                        <input type="text" name="player-one-name" id="player-one-name" value="Player 1">
-                    </div>
-                    <div id="player-one-ai-options" class="ai-level">
-                        <label for="ai-level">AI-level</label>
-                        <select name="ai-level" id="ai-level" autocomplete="off">
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
-                        </select>
-                    </div>
-                </fieldset>
-                <fieldset id="player-two">
-                    <legend>Player 2</legend>
-                    <div class="radio">
-                        <label for="player-two-human">Human</label>
-                        <input type="radio" name="player-two" id="player-two-human" autocomplete="off" checked>
-                    </div>
-                    <div class="radio">
-                        <label for="player-two-ai">AI</label>
-                        <input type="radio" name="player-two" id="player-two-ai" autocomplete="off">
-                    </div>
-                    <div id="player-two-human-options" class="player-name active">
-                        <label for="player-two-name" class="text-label">Name:</label>
-                        <input type="text" name="player-one-name" id="player-one-name" value="Player 2">
-                    </div>
-                    <div id="player-two-ai-options" class="ai-level">
-                        <label for="ai-level">AI-level</label>
-                        <select name="ai-level" id="ai-level" autocomplete="off">
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
-                        </select>
-                    </div>
-                </fieldset>
-            </form>
-            <button form="players" id="start">Begin!</button>
+        <div class="turn">
+            <p class="marker">X</p>
+            <p>Turn</p>
         </div>
-        <div class="container"></div>
-        <div class="overlay end">
-            <p id="end-message"></p>
-            <button id="reset">Play again?</button>
+        <div class="wrapper">
+            <div class="overlay start active">
+                <h2>Choose players:</h2>
+                <form action="" id="players">
+                    <fieldset id="player-one">
+                        <legend>Player 1</legend>
+                        <div class="radio">
+                            <input type="radio" name="player-one" id="player-one-human" autocomplete="off" checked>
+                            <label for="player-one-human">Human</label>
+                        </div>
+                        <div class="radio">
+                            <input type="radio" name="player-one" id="player-one-ai" autocomplete="off">
+                            <label for="player-one-ai">AI</label>
+                        </div>
+                        <div id="player-one-human-options" class="player-name active">
+                            <label for="player-one-name" class="text-label">Name:</label>
+                            <input type="text" name="player-one-name" id="player-one-name" class="player-name-text" value="Player 1">
+                        </div>
+                        <div id="player-one-ai-options" class="ai-level">
+                            <label for="ai-one-level">AI-level:</label>
+                            <select name="ai-one-level" id="ai-one-level" autocomplete="off">
+                                <option value="easy">Easy</option>
+                                <option value="medium">Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                    </fieldset>
+                    <fieldset id="player-two">
+                        <legend>Player 2</legend>
+                        <div class="radio">
+                            <input type="radio" name="player-two" id="player-two-human" autocomplete="off" checked>
+                            <label for="player-two-human">Human</label>
+                        </div>
+                        <div class="radio">
+                            <input type="radio" name="player-two" id="player-two-ai" autocomplete="off">
+                            <label for="player-two-ai">AI</label>
+                        </div>
+                        <div id="player-two-human-options" class="player-name active">
+                            <label for="player-two-name" class="text-label">Name:</label>
+                            <input type="text" name="player-one-name" id="player-one-name" class="player-name-text" value="Player 2">
+                        </div>
+                        <div id="player-two-ai-options" class="ai-level">
+                            <label for="ai-two-level">AI-level:</label>
+                            <select name="ai-two-level" id="ai-two-level" autocomplete="off">
+                                <option value="easy">Easy</option>
+                                <option value="medium">Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                    </fieldset>
+                </form>
+                <button form="players" id="start">Begin!</button>
+            </div>
+            <div class="container"></div>
+            <div class="overlay end">
+                <p id="end-message"></p>
+                <button id="reset">Play again?</button>
+            </div>
+        </div>
+        <div class="turn">
+            <p class="marker">O</p>
+            <p>Turn</p>
         </div>
     </main>
 </body>
