@@ -1,6 +1,7 @@
 :root {
     --container-width: 700px;
     --main-background-color: #1f2937;
+    --overlay-background-color: #e2e8f0;
     --checked-color: #475569;
     --unchecked-color: #f1f5f9;
     --font: 'Varela Round', sans-serif;
@@ -35,7 +36,6 @@ body {
 
 main {
     position: relative;
-    margin: 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,21 +44,33 @@ main {
 .wrapper {
     position: relative;
     display: flex;
+    /* border-radius: 10px; */
     overflow: hidden;
 }
 .container {
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    background-color: #64748b;
+    border: 8px solid #64748b;
+    gap: 5px;
     width: var(--container-width);
     height: var(--container-width);
 }
 
 .tile {
     background-color: #e5e7eb;
-    border: 1px solid black;
     font-size: 10rem;
     text-align: center;
     user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.tile.win {
+    transition: color 1s linear;
+    color: red;
 }
 
 .tile:hover {
@@ -75,7 +87,7 @@ main {
     gap: 2rem;
     align-items: center;
     justify-content: center;
-    background-color: #e2e8f0;
+    background-color: var(--overlay-background-color);
     transition: left 0.5s linear;
 }
 .overlay.active {
@@ -85,9 +97,15 @@ main {
     left: calc(var(--container-width)*(-1));
 }
 .end {
+    background-color: #e2e8f099;
     left: var(--container-width);
 }
-
+#end-message {
+    background-color: #e2e8f0FF;
+    padding: 0.5rem;
+    border: 3px solid var(--checked-color);
+    border-radius: 5px;
+}
 form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -103,7 +121,7 @@ fieldset {
     align-items: center;
     margin-top: 1em;
     min-width: 100%;
-    border: 1px solid black;
+    border: 3px solid var(--checked-color);
     border-radius: 5px;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
@@ -111,8 +129,8 @@ fieldset {
 legend {
     position: absolute;
     top: -2rem;
-    left: 35%;
     width: 100%;
+    text-align: center;
     font-weight: bold;
 }
 .player-name, .ai-level {
@@ -121,6 +139,7 @@ legend {
 }
 .player-name.active, .ai-level.active {
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 0.5rem;
 }
@@ -131,22 +150,24 @@ input[type="radio"] {
 
 input[type="radio"]+label, button{
     display: block;
-    border: 1px solid black;
     padding: 1rem;
     border-radius: 5px;
+    border: 2px solid var(--checked-color);
     font-size: 1.5rem;
     text-align: center;
     background-color: var(--unchecked-color);
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, scale 0.2s ease-in-out;
 }
 
 input[type="radio"]:not(:checked)+label:hover, button:hover {
     background-color: #cbd5e1;
+    scale: 1.1;
 }
 
 input:checked+label, button:active {
     background-color: var(--checked-color);
     color: var(--unchecked-color);
+    scale: 1.1;
 }
 
 input:checked+label{
@@ -159,7 +180,8 @@ input:checked+label{
 
 .player-name-text, select {
     background-color: var(--unchecked-color);
-    border: 1px solid black;
+    border: 2px solid var(--checked-color);
+    border-radius: 5px;
     font-size: 1rem;
     padding: 0.5rem;
     font-family: var(--font);
@@ -171,7 +193,7 @@ input:checked+label{
 
 div.turn {
     opacity: 0;
-    color: #e2e8f0;
+    color: var(--overlay-background-color);
     font-size: 4rem;
     padding: 2rem;
     display: flex;
@@ -186,4 +208,66 @@ div.turn.active {
 
 .marker {
     font-size: 10rem;
+}
+
+@media (max-width: 1100px) {
+    :root {
+        --container-width: 500px;
+    }
+    .overlay {
+        gap: 1rem;
+    }
+    form {
+        margin: 0 1rem;
+        gap: 1rem;
+    }
+    fieldset {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    .player-name.active, .ai-level.active {
+        grid-column: 1/2;
+        flex-wrap: wrap;
+    }
+    .ai-level select {
+        width: 100%;
+    }
+    .tile {
+        font-size: 8rem;
+    }
+    div.turn {
+        font-size: 2rem;
+    }
+    .marker {
+        font-size: 6rem;
+    }
+}
+
+@media (max-width: 40em) {
+    :root {
+        --container-width: 100vw;
+    }
+    main {
+        display: grid;
+        grid-template-rows: var(--container-width);
+    }
+    .wrapper {
+        align-self: start;
+    }
+    div.turn {
+        grid-row: 2/3;
+        grid-column: 1/2;
+        font-size: 2rem;
+        align-self: start;
+    }
+    .marker {
+        font-size: 6rem;
+    }
+}
+
+@media (max-width: 500px) {
+    :root {
+        font-size: 15px;
+    }
 }
