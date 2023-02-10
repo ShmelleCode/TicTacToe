@@ -2,10 +2,10 @@ const container = document.querySelector(".container");
 const overlayStart = document.querySelector(".start");
 const overlayEnd = document.querySelector(".end");
 const resetButton = document.querySelector("#reset");
-const startForm = document.querySelector("#players");
+const startForm = document.querySelector("#players-form");
 const radioOptions = document.querySelectorAll("input[type='radio']");
 const turnDisplay = document.querySelectorAll('.turn');
-const markers = ["x", "o"];
+const markers = ["X", "O"];
 
 const gameBoard = (() => {
     let _boardState = new Array(9).fill("");
@@ -16,7 +16,9 @@ const gameBoard = (() => {
             const tileElement = document.createElement("div");
             tileElement.classList.add("tile");
             tileElement.dataset.index = i;
-            tileElement.textContent = tile;
+            const tileMarker = document.createElement("p");
+            tileMarker.textContent = tile;
+            tileElement.appendChild(tileMarker);
             container.appendChild(tileElement);
         })
     }
@@ -60,8 +62,8 @@ const Player = (name, marker, isAi, aiLevel) => {
 const gameFlow = (() => {
     let _players = [];
     let _activePlayer;
-    let _activePlayerNumber;
-    let _turnCount;
+    let _activePlayerFlag;
+    let _winComb = [];
     
     function gameStart(event) {
         gameBoard.resetState();
@@ -69,7 +71,7 @@ const gameFlow = (() => {
         _players = [];
         _setPlayers();
         _activePlayer = _players[0];
-        _activePlayerNumber = 1;
+        _activePlayerFlag = true;
         overlayStart.classList.remove("active");
         turnDisplay[0].classList.toggle('active');
         (_players[0].checkIsAi()) ? setTimeout(_aiTurn, 1000, 'easy')
@@ -116,7 +118,10 @@ const gameFlow = (() => {
             [2, 4, 6]
         ];
         for (let comb of winCombs) {
-            if (comb.every((cell) => state[cell] === playerMarker)) return 10;
+            if (comb.every((cell) => state[cell] === playerMarker)) {
+                _winComb = comb;
+                return 10;
+            }
             if (comb.every((cell) => state[cell] === opponentMarker)) return -10;
         }
         return 0;
@@ -147,6 +152,7 @@ const gameFlow = (() => {
         switch (outcome) {
             case "win": 
                 endMessage.textContent = `${player.getName()} wins!`;
+                _winComb.forEach((index) => document.querySelector(`div[data-index="${index}"]`).classList.add('win'));
                 break;
             case "tie": 
                 endMessage.textContent = `It's a tie!`;
@@ -157,17 +163,11 @@ const gameFlow = (() => {
     }
 
     function _switchActivePlayer() {
-        if (_activePlayerNumber == 1) {
-            _activePlayer = _players[1];
-            _activePlayerNumber = 2;
-        } else {
-            _activePlayer = _players[0];
-            _activePlayerNumber = 1;
-        }
-        _turnCount++;
+        _activePlayer = (_activePlayerFlag) ? _players[1] : _players[0];
+        _activePlayerFlag = !_activePlayerFlag;
         turnDisplay.forEach((node) => node.classList.toggle('active'));
         (_activePlayer.checkIsAi()) 
-            ? setTimeout(_aiTurn, 500, (_activePlayer.getAiLevel() == 'medium' && _turnCount <= 1) ? 'easy' : _activePlayer.getAiLevel())
+            ? setTimeout(_aiTurn, 500, _activePlayer.getAiLevel())
             : container.addEventListener("click", _placeMarker);
         
     }
@@ -180,7 +180,8 @@ const gameFlow = (() => {
                 index = _aiTurnEasy(gameState);
                 break;
             case 'medium':
-                index = _aiTurnMinimax(gameState);
+                const randomAi = Math.random();
+                index = (randomAi >= 0.3) ? _aiTurnMinimax(gameState) : _aiTurnEasy(gameState);
                 break;
             case 'hard':
                 index = _aiTurnMinimax(gameState);
@@ -202,7 +203,7 @@ const gameFlow = (() => {
 
     function _aiTurnMinimax(state) {
         const playerMarker = _activePlayer.getMarker();
-        const opponentMarker = (playerMarker == 'x' ? 'o' : 'x');
+        const opponentMarker = (playerMarker == 'X' ? 'O' : 'X');
         return _findBestMove(state, playerMarker, opponentMarker);
     }
 
