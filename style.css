@@ -47,9 +47,7 @@ main {
 .container {
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-    background-color: var(--border-text-color);
-    border: 5px solid var(--border-text-color);
-    gap: 5px;
+    border: 2px solid var(--border-text-color);
     width: var(--container-width);
     height: var(--container-width);
 }
@@ -57,6 +55,7 @@ main {
 .tile {
     background-color: var(--main-background-color);
     font-size: 10rem;
+    border: 2px solid var(--border-text-color);
     color: var(--border-text-color);
     text-align: center;
     user-select: none;
@@ -67,7 +66,7 @@ main {
 }
 
 .tile.win {
-    transition: color 1s linear;
+    transition: color 0.5s linear;
     color: red;
 }
 
