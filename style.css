@@ -1,9 +1,8 @@
 :root {
     --container-width: 700px;
     --main-background-color: #1f2937;
-    --overlay-background-color: #e2e8f0;
+    --border-text-color: #e2e8f0;
     --checked-color: #475569;
-    /* --unchecked-color: #f1f5f9; */
     --font: 'Varela Round', sans-serif;
 }
 
@@ -44,14 +43,12 @@ main {
 .wrapper {
     position: relative;
     display: flex;
-    /* border-radius: 10px; */
-    overflow: hidden;
 }
 .container {
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-    background-color: #64748b;
-    border: 8px solid #64748b;
+    background-color: var(--border-text-color);
+    border: 5px solid var(--border-text-color);
     gap: 5px;
     width: var(--container-width);
     height: var(--container-width);
@@ -60,7 +57,7 @@ main {
 .tile {
     background-color: var(--main-background-color);
     font-size: 10rem;
-    color: var(--overlay-background-color);
+    color: var(--border-text-color);
     text-align: center;
     user-select: none;
     display: flex;
@@ -80,32 +77,34 @@ main {
 
 .overlay {
     position: absolute;
+    opacity: 0;
     width: var(--container-width);
     height: var(--container-width);
-    color: var(--overlay-background-color);
+    color: var(--border-text-color);
     display: flex;
     flex-direction: column;
     font-size: 2rem;
     gap: 2rem;
+    z-index: -1;
     align-items: center;
     justify-content: center;
     background-color: var(--main-background-color);
-    transition: left 0.5s linear;
+    transition: z-index 1s ease-in-out, opacity 1s ease-in-out;
 }
 .overlay.active {
-    left: 0;
-}
-.start {
-    left: calc(var(--container-width)*(-1));
+    opacity: 100;
+    z-index: 100;
 }
 .end {
     background-color: transparent;
     backdrop-filter: blur(5px);
-    left: var(--container-width);
 }
+
 #end-message {
     padding: 0.5rem;
-    border: 3px solid var(--overlay-background-color);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 3px solid var(--border-text-color);
     border-radius: 5px;
 }
 form {
@@ -122,7 +121,7 @@ fieldset {
     align-items: center;
     margin-top: 1em;
     min-width: 100%;
-    border: 3px solid var(--overlay-background-color);
+    border: 3px solid var(--border-text-color);
     border-radius: 5px;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
@@ -152,28 +151,34 @@ input[type="radio"] {
 input[type="radio"]+label, button{
     display: block;
     padding: 1rem;
-    color: var(--main-background-color);
     border-radius: 5px;
     border: 2px solid var(--checked-color);
     font-size: 1.5rem;
     text-align: center;
-    background-color: var(--overlay-background-color);
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, scale 0.2s ease-in-out;
+}
+
+button {
+    background-color: transparent;
+    border-color: var(--border-text-color);
+    backdrop-filter: blur(10px);
+    color: var(--border-text-color);
 }
 
 input[type="radio"]:not(:checked)+label:hover, button:hover {
     background-color: #cbd5e1;
+    color: var(--main-background-color);
     scale: 1.1;
 }
 
 input:checked+label, button:active {
     background-color: var(--checked-color);
-    color: var(--overlay-background-color);
+    color: var(--border-text-color);
     scale: 1.1;
 }
 
 input:checked+label{
-    border: 5px solid var(--overlay-background-color);
+    border: 5px solid var(--border-text-color);
 }
 
 .player-name-text {
@@ -182,8 +187,8 @@ input:checked+label{
 
 .player-name-text, select {
     background-color: transparent;
-    border: 2px solid var(--overlay-background-color);
-    color: var(--overlay-background-color);
+    border: 2px solid var(--border-text-color);
+    color: var(--border-text-color);
     font-weight: bold;
     border-radius: 5px;
     font-size: 1rem;
@@ -201,7 +206,7 @@ option {
 
 div.turn {
     opacity: 0;
-    color: var(--overlay-background-color);
+    color: var(--border-text-color);
     font-size: 4rem;
     padding: 2rem;
     display: flex;
