@@ -1,3 +1,4 @@
+//DOM elements
 const container = document.querySelector(".container");
 const overlayStart = document.querySelector(".start");
 const overlayEnd = document.querySelector(".end");
@@ -5,11 +6,15 @@ const resetButton = document.querySelector("#reset");
 const startForm = document.querySelector("#players-form");
 const radioOptions = document.querySelectorAll("input[type='radio']");
 const turnDisplay = document.querySelectorAll('.turn');
+
 const markers = ["X", "O"];
 
+//gameboard controls
 const gameBoard = (() => {
+    //board array
     let _boardState = new Array(9).fill("");
     
+    //render board to DOM based on array
     function _renderBoard() {
         container.innerHTML = "";
         _boardState.forEach((tile, i) => {
@@ -40,6 +45,7 @@ const gameBoard = (() => {
         overlayStart.classList.add("active");
     }
 
+    //switch visible player option based on radio buttons
     function switchOptions() {
         const radioName = this.name;
         const radios = document.querySelectorAll(`input[name=${radioName}]`);
@@ -65,6 +71,7 @@ const gameFlow = (() => {
     let _activePlayerFlag;
     let _winComb = [];
     
+    //set initial player, make first turn if first player is AI (always random)
     function gameStart(event) {
         gameBoard.resetState();
         _turnCount = 0;
@@ -79,6 +86,7 @@ const gameFlow = (() => {
         event.preventDefault();
     }
 
+    //get player data from form
     function _setPlayers() {
         const playerFields = document.querySelectorAll("fieldset div.active");
         let aiCount = 1;
@@ -94,6 +102,7 @@ const gameFlow = (() => {
         });
     }
 
+    //event handler for human player turn
     function _placeMarker(event) {
         if (event.target.textContent) return;
         
@@ -106,6 +115,7 @@ const gameFlow = (() => {
         _switchActivePlayer();
     }
 
+    //get board score for active player (10 for win, -10 for loss, 0 if game still going)
     function _evaluateBoard(state, playerMarker, opponentMarker) {
         const winCombs = [
             [0, 1, 2],
@@ -136,7 +146,7 @@ const gameFlow = (() => {
         const currState = gameBoard.getState();
         const activeMarker = _activePlayer.getMarker();
         if (_evaluateBoard(currState, activeMarker) > 0) {
-            _gameEnd("win", _activePlayer);
+            setTimeout(_gameEnd, 50, "win", _activePlayer);
             return true;
         }
         if (_checkTie(currState)) {
@@ -146,6 +156,7 @@ const gameFlow = (() => {
         return false;
     }
     
+    //end the game, show ending overlay
     function _gameEnd(outcome, player = {}) {
         container.removeEventListener("click", _placeMarker);
         const endMessage = document.querySelector("#end-message");
@@ -162,6 +173,7 @@ const gameFlow = (() => {
         overlayEnd.classList.add("active");
     }
 
+    //switch active player, if new active is ai - make a turn
     function _switchActivePlayer() {
         _activePlayer = (_activePlayerFlag) ? _players[1] : _players[0];
         _activePlayerFlag = !_activePlayerFlag;
@@ -172,17 +184,21 @@ const gameFlow = (() => {
         
     }
 
+    //ai turn based on level
     function _aiTurn(level) {
         const gameState = gameBoard.getState();
         let index = 0;
         switch (level) {
             case 'easy': 
+            //random move
                 index = _aiTurnEasy(gameState);
                 break;
+            //30% random move, 70% minimax move
             case 'medium':
                 const randomAi = Math.random();
                 index = (randomAi >= 0.3) ? _aiTurnMinimax(gameState) : _aiTurnEasy(gameState);
                 break;
+            //minimax move
             case 'hard':
                 index = _aiTurnMinimax(gameState);
                 break;
@@ -193,6 +209,7 @@ const gameFlow = (() => {
         _switchActivePlayer();
     }
 
+    //random move
     function _aiTurnEasy(state) {
         let index = Math.floor(Math.random()*9);
         while (state[index]) {
@@ -201,26 +218,31 @@ const gameFlow = (() => {
         return index;
     }
 
+    //minimax optimized move
     function _aiTurnMinimax(state) {
         const playerMarker = _activePlayer.getMarker();
         const opponentMarker = (playerMarker == 'X' ? 'O' : 'X');
         return _findBestMove(state, playerMarker, opponentMarker);
     }
 
+    // memoized recursive minimax algo, returns best possible score for a given gamestate 
+    // max for player/min for opponent
+    // accounting for amount of turns
     function _minimax(state, depth, isPlayerTurn, playerMarker, opponentMarker, memo={}) {
+        //memoization
         const stateName = state.join(',');
         if (stateName in memo) return memo[stateName];
     
         let score = _evaluateBoard(state, playerMarker, opponentMarker);
-    
+        
+        //terminal conditions
         if (score === 10) return score;
-    
         if (score === -10) return score;
-    
         if (_checkTie(state)) return 0;
     
         let bestScore = isPlayerTurn ? -1000 : 1000;
-    
+        
+        //try every possible move for current state
         state.forEach((cell, index) => {
             if (cell) return;
             state[index] = isPlayerTurn ? playerMarker : opponentMarker;
@@ -233,6 +255,7 @@ const gameFlow = (() => {
         return memo[stateName];
     }
     
+    //find best move index based on minimax for current turn
     function _findBestMove(state, playerMarker, opponentMarker) {
         let bestMove = -1;
         let bestScore = -1000;
@@ -252,6 +275,7 @@ const gameFlow = (() => {
     return {gameStart};
 })();
 
+//event listeners for buttons and radio
 startForm.addEventListener("submit", gameFlow.gameStart);
 resetButton.addEventListener("click", gameBoard.restart);
 radioOptions.forEach((radio) => {
