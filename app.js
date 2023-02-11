@@ -92,7 +92,7 @@ const gameFlow = (() => {
         let aiCount = 1;
         playerFields.forEach((playerField, index) => {
             if (playerField.classList.contains("player-name")) {
-                let playerName = playerField.querySelector("input[type='text']").value;
+                let playerName = playerField.querySelector("input[type='text']").value || `Player ${markers[index]}`;
                 _players.push(Player(playerName, markers[index], false));
             } else {
                 let aiLevel = playerField.querySelector("select").value;
@@ -156,7 +156,7 @@ const gameFlow = (() => {
         return false;
     }
     
-    //end the game, show ending overlay
+    //end the game, highlight winning tiles if any, show ending overlay
     function _gameEnd(outcome, player = {}) {
         container.removeEventListener("click", _placeMarker);
         const endMessage = document.querySelector("#end-message");
