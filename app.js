@@ -89,15 +89,13 @@ const gameFlow = (() => {
     //get player data from form
     function _setPlayers() {
         const playerFields = document.querySelectorAll("fieldset div.active");
-        let aiCount = 1;
         playerFields.forEach((playerField, index) => {
             if (playerField.classList.contains("player-name")) {
                 let playerName = playerField.querySelector("input[type='text']").value || `Player ${markers[index]}`;
                 _players.push(Player(playerName, markers[index], false));
             } else {
                 let aiLevel = playerField.querySelector("select").value;
-                _players.push(Player(`${aiLevel}AI${aiCount}`, markers[index], true, aiLevel));
-                aiCount++;
+                _players.push(Player(`${aiLevel}AI ${markers[index]}`, markers[index], true, aiLevel));
             }
         });
     }
