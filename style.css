@@ -112,7 +112,7 @@ form {
 }
 fieldset {
     position: relative;
-    padding: 10%;
+    padding: 2rem;
     display: grid;
     align-items: center;
     margin-top: 1rem;
@@ -223,6 +223,7 @@ div.turn.active {
     fieldset {
         grid-template-columns: 1fr;
         gap: 1rem;
+        padding: 1rem;
     }
     .player-name.active, .ai-level.active {
         grid-column: 1/2;
