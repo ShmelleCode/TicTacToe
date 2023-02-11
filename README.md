@@ -1,4 +1,4 @@
-Simple TicTacToe game done with vanilla HTML/CSS/JS as part of The Odin Project.
+Simple TicTacToe game done with vanilla HTML/CSS/JS as part of The Odin Project. <br>
 Can be played with 2 human players/vs AI/AI vs AI.
 
 AI difficulties:
