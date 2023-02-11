@@ -40,6 +40,7 @@ main {
     align-items: center;
     user-select: none;
 }
+
 .wrapper {
     position: relative;
     display: flex;
@@ -51,25 +52,21 @@ main {
     width: var(--container-width);
     height: var(--container-width);
 }
-
 .tile {
     background-color: var(--main-background-color);
     font-size: 10rem;
     border: 2px solid var(--border-text-color);
     color: var(--border-text-color);
     text-align: center;
-    user-select: none;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
 }
-
 .tile.win {
-    transition: color 0.5s linear;
+    transition: color 0.5s ease-in-out;
     color: red;
 }
-
 .tile:hover {
     background-color: #9ca3af;
 }
@@ -98,7 +95,6 @@ main {
     background-color: transparent;
     backdrop-filter: blur(5px);
 }
-
 #end-message {
     padding: 0.5rem;
     text-align: center;
@@ -106,6 +102,7 @@ main {
     border: 3px solid var(--border-text-color);
     border-radius: 5px;
 }
+
 form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -115,10 +112,10 @@ form {
 }
 fieldset {
     position: relative;
-    padding: 2rem;
+    padding: 10%;
     display: grid;
     align-items: center;
-    margin-top: 1em;
+    margin-top: 1rem;
     min-width: 100%;
     border: 3px solid var(--border-text-color);
     border-radius: 5px;
@@ -142,48 +139,12 @@ legend {
     align-items: center;
     gap: 0.5rem;
 }
-
-input[type="radio"] {
-    display: none;
-}
-
-input[type="radio"]+label, button{
-    display: block;
-    padding: 1rem;
-    border-radius: 5px;
-    border: 2px solid var(--checked-color);
-    font-size: 1.5rem;
-    text-align: center;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, scale 0.2s ease-in-out;
-}
-
-button {
-    background-color: transparent;
-    border-color: var(--border-text-color);
-    backdrop-filter: blur(10px);
-    color: var(--border-text-color);
-}
-
-input[type="radio"]:not(:checked)+label:hover, button:hover {
-    background-color: #cbd5e1;
-    color: var(--main-background-color);
-    scale: 1.1;
-}
-
-input:checked+label, button:active {
-    background-color: var(--checked-color);
-    color: var(--border-text-color);
-    scale: 1.1;
-}
-
-input:checked+label{
-    border: 5px solid var(--border-text-color);
-}
-
 .player-name-text {
     width: 100%;
 }
-
+.ai-level select {
+    flex-grow: 1;
+}
 .player-name-text, select {
     background-color: transparent;
     border: 2px solid var(--border-text-color);
@@ -194,13 +155,41 @@ input:checked+label{
     padding: 0.5rem;
     font-family: var(--font);
 }
-
 option {
     background-color: var(--main-background-color);
 }
 
-.ai-level select {
-    flex-grow: 1;
+
+input[type="radio"] {
+    display: none;
+}
+input[type="radio"]+label, button{
+    display: block;
+    padding: 1rem;
+    border-radius: 5px;
+    border: 2px solid var(--checked-color);
+    font-size: 1.5rem;
+    text-align: center;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, scale 0.2s ease-in-out;
+}
+button {
+    background-color: transparent;
+    border-color: var(--border-text-color);
+    backdrop-filter: blur(10px);
+    color: var(--border-text-color);
+}
+input[type="radio"]:not(:checked)+label:hover, button:hover {
+    background-color: #cbd5e1;
+    color: var(--main-background-color);
+    scale: 1.1;
+}
+input:checked+label, button:active {
+    background-color: var(--checked-color);
+    color: var(--border-text-color);
+    scale: 1.1;
+}
+input:checked+label{
+    border: 5px solid var(--border-text-color);
 }
 
 div.turn {
@@ -213,11 +202,9 @@ div.turn {
     align-items: center;
     transition: opacity 0.3s ease-in-out;
 }
-
 div.turn.active {
     opacity: 100;
 }
-
 .marker {
     font-size: 10rem;
 }
@@ -236,7 +223,6 @@ div.turn.active {
     fieldset {
         grid-template-columns: 1fr;
         gap: 1rem;
-        padding: 1rem;
     }
     .player-name.active, .ai-level.active {
         grid-column: 1/2;
